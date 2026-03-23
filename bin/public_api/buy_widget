@@ -1,0 +1,47 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+INVENTORY_FILE="$SCRIPT_DIR/inventory.txt"
+LOG_FILE="$SCRIPT_DIR/sales.log"
+LOCK_FILE="$SCRIPT_DIR/inventory.lock"
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: buy_widget <username> <quantity>"
+    exit 1
+fi
+
+username="$1"
+quantity="$2"
+
+if ! [[ "$quantity" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Invalid transaction: quantity must be a positive integer."
+    exit 1
+fi
+
+if [ ! -f "$INVENTORY_FILE" ]; then
+    echo "100" > "$INVENTORY_FILE"
+fi
+
+log_transaction() {
+    echo "[IDTB110321] [SUCCESS] $username bought $quantity widgets." >> "$LOG_FILE"
+}
+
+(
+    flock -x 200
+
+    current_inventory=$(cat "$INVENTORY_FILE" 2>/dev/null)
+
+    if ! [[ "$current_inventory" =~ ^[0-9]+$ ]]; then
+        echo "Transaction Failed: Inventory temporarily unavailable!"
+        exit 1
+    fi
+
+    if [ "$quantity" -le "$current_inventory" ]; then
+        new_inventory=$((current_inventory - quantity))
+        echo "$new_inventory" > "$INVENTORY_FILE"
+        log_transaction
+    else
+        echo "Transaction Failed: Not enough inventory!"
+    fi
+
+) 200>"$LOCK_FILE"

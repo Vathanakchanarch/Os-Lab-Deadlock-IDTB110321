@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Open local and remote lock files
+exec 200>"$HOME/os-lab-deadlock/public_dr_alpha/vault.lock"
+exec 201>"/home/g11-deng-monyoudom/os-lab-deadlock/public_dr_beta/vault.lock"
+
+(
+  echo "[CROSS_ALPHA] Locking local Alpha vault..."
+  flock -x 200
+  echo "[CROSS_ALPHA] Local Alpha vault locked. Preparing sync..."
+  sleep 2
+
+  echo "[CROSS_ALPHA] Locking remote Beta vault..."
+  flock -x 201
+  echo "[CROSS_ALPHA] Remote Beta vault locked. Syncing..."
+  sleep 1
+
+  echo "[CROSS_ALPHA] Cross-site sync complete."
+)

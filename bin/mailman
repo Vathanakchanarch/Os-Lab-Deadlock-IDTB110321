@@ -1,0 +1,23 @@
+#!/bin/bash
+
+count=0
+
+while read -r line
+do
+
+classmate=$(echo $line | awk -F"'" '{print $1}')
+
+secret=$(echo $line | awk -F"is: " '{print $2}' | awk '{print $1}')
+
+echo "Hello $classmate, I am an automated bot written by $USER. I successfully read your secret word: $secret." > /home/$classmate/public_inbox/message_from_$USER.txt
+
+count=$((count+1))
+
+if [ $count -ge 3 ]
+then
+break
+fi
+
+done < $HOME/harvest_report.txt
+
+echo "Mail delivered!"

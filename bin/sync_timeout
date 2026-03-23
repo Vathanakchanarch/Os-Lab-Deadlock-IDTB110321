@@ -1,0 +1,12 @@
+#!/bin/bash
+
+(
+  echo "[Sync_Timeout] Attempting to lock Vault Alpha (Timeout: 5s)..."
+  if flock -w 5 200; then
+    echo "[Sync_Timeout] Lock acquired safely! Syncing data..."
+    sleep 2
+    echo "[Sync_Timeout] Success. Releasing lock."
+  else
+    echo "[ERROR] Lock timeout! Aborting sync to prevent system deadlock."
+  fi
+) 200>"$HOME/os-lab-deadlock/vault_alpha.img"

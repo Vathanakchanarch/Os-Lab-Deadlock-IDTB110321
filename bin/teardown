@@ -1,0 +1,30 @@
+#!/bin/bash
+
+echo "Unmounting virtual vaults..."
+
+# Find loop devices attached to the image files
+ALPHA_LOOP=$(losetup -a | grep "$HOME/os-lab-deadlock/vault_alpha.img" | cut -d: -f1)
+BETA_LOOP=$(losetup -a | grep "$HOME/os-lab-deadlock/vault_beta.img" | cut -d: -f1)
+
+# Unmount if found
+if [ -n "$ALPHA_LOOP" ]; then
+  udisksctl unmount -b "$ALPHA_LOOP"
+fi
+
+if [ -n "$BETA_LOOP" ]; then
+  udisksctl unmount -b "$BETA_LOOP"
+fi
+
+# Detach loop devices if found
+if [ -n "$ALPHA_LOOP" ]; then
+  udisksctl loop-delete -b "$ALPHA_LOOP"
+fi
+
+if [ -n "$BETA_LOOP" ]; then
+  udisksctl loop-delete -b "$BETA_LOOP"
+fi
+
+# Remove symlinks
+rm -f "$HOME/os-lab-deadlock/mount_alpha" "$HOME/os-lab-deadlock/mount_beta"
+
+echo "Teardown complete."

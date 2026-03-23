@@ -1,0 +1,16 @@
+(
+echo "[Sync_UP] Locking Vault Alpha..."
+flock -x 200
+
+echo "[Sync_UP] Vault Alpha locked. Computing data delta..."
+sleep 2
+
+echo "[Sync_UP] Locking Vault Beta to write..."
+flock -x 201
+
+echo "[Sync_UP] Vault Beta locked. Syncing data..."
+sleep 1
+
+echo "[Sync_UP] Sync complete. Releasing locks."
+) 200>$HOME/os-lab-deadlock/locks/alpha.lock \
+  201>$HOME/os-lab-deadlock/locks/beta.lock

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for i in {1..50}; do
+    /home/g11-chom-devid/public_api/buy_widget "Bot_$i" 2 &
+done
+
+wait

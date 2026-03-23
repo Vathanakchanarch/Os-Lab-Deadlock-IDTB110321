@@ -1,0 +1,11 @@
+Run 1: 82
+Run 2: 88
+Run 3: 92
+Run 4: 88
+Run 5: 84
+
+Explanation:
+The final inventory differs between runs because concurrent processes read and write the shared inventory file without synchronization. The operating system schedules the processes differently each time, so some updates are lThe result is inconsistent because multiple bot processes access inventory.txt at the same time.
+Some processes read the same inventory value before others write updates back.
+In some cases, a process reads the file while another process is rewriting it, causing temporary invalid or empty reads.
+This demonstrates a TOC-TOU race condition because the check and the update are not performed atomically.

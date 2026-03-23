@@ -1,0 +1,23 @@
+#!/bin/bash
+
+report="$HOME/harvest_report.txt"
+
+> $report
+
+for user_dir in /home/*; do
+
+username=$(basename $user_dir)
+
+target_file="$user_dir/public_outbox/secret.txt"
+
+if [ -f "$target_file" ] && [ -r "$target_file" ]; then
+
+secret_data=$(cat $target_file)
+
+echo "$username's secret is: $secret_data" >> $report
+
+fi
+
+done
+
+echo "Harvest complete!"
