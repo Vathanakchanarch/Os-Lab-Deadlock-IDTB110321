@@ -1,4 +1,0 @@
-#!/bin/bash 
-echo "Hello from my first script! My current directory is :"
-pwd
-
